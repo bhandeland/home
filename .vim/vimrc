@@ -1,0 +1,87 @@
+"NeoBundle Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
+endif
+
+" Required:
+set runtimepath+=/home/bhandeland/.vim/bundle/neobundle.vim/
+
+" Required:
+call neobundle#begin(expand('/home/bhandeland/.vim/bundle'))
+
+" Let NeoBundle manage NeoBundle
+" Required:
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+" Add or remove your Bundles here:
+NeoBundle 'mrk21/yaml-vim'
+NeoBundle 'Shougo/neosnippet.vim'
+NeoBundle 'Shougo/neosnippet-snippets'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'ctrlpvim/ctrlp.vim'
+NeoBundle 'flazz/vim-colorschemes'
+
+" You can specify revision/branch/tag.
+"NeoBundle 'Shougo/vimshell', { 'rev' : '3787e5' }
+"
+
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'valloric/youcompleteme'
+NeoBundle 'krzysztof-magosa/vim-ansibledict'
+
+NeoBundle 'vim-perl/vim-perl'
+NeoBundle 'tibabit/vim-templates'
+
+" Required:
+call neobundle#end()
+
+" Required:
+filetype plugin indent on
+
+
+NeoBundleCheck
+"End NeoBundle Scripts-------------------------
+"
+au BufRead,BufNewFile */ansible/*.yml LoadDefaultAnsibleDict
+set complete+=k
+
+if has("autocmd")
+  augroup templates
+    autocmd BufNewFile *.yml 0r ~/.vim/templates/skeleton.yml
+  augroup END
+endif
+
+let g:tmpl_search_paths = ['~/.vim/templates']
+let g:tmpl_author_email = 'brandon@unbuffered.net'
+
+autocmd FileType perl set autoindent|set smartindent
+autocmd FileType perl set tabstop=4|set shiftwidth=4|set expandtab | set softtabstop=4
+autocmd FileType perl set showmatch
+autocmd FileType perl set number
+
+autocmd FileType perl set makeprg=perl\ -c\ %\ $*
+autocmd FileType perl set errorformat=%f:%l:%m
+autocmd FileType perl set autowrite
+
+vmap <tab> >gv
+vmap <s-tab> <gv
+
+nmap <tab> I<tab><esc>
+nmap <s-tab> ^i<bs><esc>
+set pastetoggle=<F11>
+vmap _c :s/^/#/gi<Enter>
+vmap _C :s/^#//gi<Enter>
+let perl_extended_vars = 1
+nnoremap <silent> _t :%!perltidy -q<Enter>
+vnoremap <silent> _t :!perltidy -q<Enter>
+
+" Deparse obfuscated code
+nnoremap <silent> _d :.!perl -MO=Deparse 2>/dev/null<cr>
+vnoremap <silent> _d :!perl -MO=Deparse 2>/dev/null<cr>
+set incsearch
+set vb
+set incsearch
+syntax on
+
+autocmd BufWritePost *  execute '! if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1 ; then git add % ; git commit -m %; fi'
